@@ -1,0 +1,33 @@
+<head>
+  <style> body { margin: 0; } </style>
+
+  <script src="//unpkg.com/react/umd/react.production.min.js"></script>
+  <script src="//unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+  <script src="//unpkg.com/babel-standalone"></script>
+
+  <script src="//unpkg.com/react-force-graph-2d"></script>
+  <!--<script src="../../src/packages/react-force-graph-2d/dist/react-force-graph-2d.js"></script>-->
+</head>
+
+<body>
+  <div id="graph"></div>
+
+  <script type="text/jsx">
+    fetch('./beta-example.json').then(res => res.json()).then(data => {
+    ReactDOM.render(
+    <ForceGraph2D
+          graphData={data}
+          nodeLabel="id"
+          nodeColor="group"
+	  nodeVal= "id_len"
+	  nodeCanvasObjectMode={node => 'after'}
+	  nodeResolution = {2}
+	  onNodeClick={node => window.open(`https://www.ncbi.nlm.nih.gov/search/all/?term=${node.id}`)}
+	  nodeCanvasObject={(node, ctx, globalScale) => {const label = node.id; const fontSize = 12/globalScale; ctx.font = `${fontSize}px Sans-Serif`; const textWidth = ctx.measureText(label).width; const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); ctx.arc(node.x, node.y, 20, 0, 6 * Math.PI, false); ctx.fillStyle = 'black'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(label, node.x, node.y);}}
+	  linkDirectionalArrowLength={5}
+	  onEngineStop={() => fgRef.current.zoomToFit(400)}
+      />,
+          document.getElementById('graph')
+      )});
+  </script>
+</body>
